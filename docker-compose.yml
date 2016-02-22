@@ -6,12 +6,14 @@ services:
     command: dworker dscheduler:8786
     networks:
       - front
+    links:
+        - dscheduler
 
   dscheduler:
     build: .
     ports:
      - "8786:8786"
-    command: dscheduler
+    command: dscheduler --host dscheduler
     networks:
       - front
     container_name: dscheduler
