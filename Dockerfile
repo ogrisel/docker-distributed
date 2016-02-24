@@ -18,7 +18,7 @@ ENTRYPOINT ["/usr/bin/tini", "--"]
 ENV BASICUSER basicuser
 ENV BASICUSER_UID 1000
 
-# Create jovyan user with UID=1000
+# Create a non-priviledge user that will run the services
 RUN useradd -m -s /bin/bash -N -u $BASICUSER_UID $BASICUSER
 
 ADD . /work
