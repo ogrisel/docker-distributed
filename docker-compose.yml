@@ -1,13 +1,16 @@
 version: "2"
 
 services:
-  dworker:
+  jupyter:
     build: .
-    command: dworker dscheduler:8786
+    command: jupyter notebook --ip='*' --no-browser
+    ports:
+       - "8888:8888"
     networks:
       - front
     links:
         - dscheduler
+    container_name: jupyter
 
   dscheduler:
     build: .
@@ -17,6 +20,14 @@ services:
     networks:
       - front
     container_name: dscheduler
+
+  dworker:
+    build: .
+    command: dworker dscheduler:8786
+    networks:
+      - front
+    links:
+        - dscheduler
 
 networks:
   front:
