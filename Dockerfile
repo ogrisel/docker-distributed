@@ -1,35 +1,29 @@
-FROM debian:jessie
+FROM alpine
 MAINTAINER Olivier Grisel <olivier.grisel@ensta.org>
 
-RUN apt-get update -yqq  && apt-get install -yqq \
-  wget \
-  bzip2 \
-  git \
-  && rm -rf /var/lib/apt/lists/*
+# Install cURL
+RUN apk --update add curl ca-certificates tar bzip2 git bash \
+  && curl -o /tmp/glibc-2.21-r2.apk \
+    https://circle-artifacts.com/gh/andyshinn/alpine-pkg-glibc/6/artifacts/0/home/ubuntu/alpine-pkg-glibc/packages/x86_64/glibc-2.21-r2.apk \
+  && apk add --allow-untrusted /tmp/glibc-2.21-r2.apk \
+  && rm /tmp/glibc-2.21-r2.apk \
+  && /usr/glibc/usr/bin/ldconfig /lib /usr/glibc/usr/lib
 
 # Install Tini
 # http://jupyter-notebook.readthedocs.org/en/latest/public_server.html#docker-cmd
 ENV TINI_VERSION v0.9.0
-ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini /usr/bin/tini
-RUN chmod +x /usr/bin/tini
+RUN curl -o /usr/bin/tini \
+  https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini \
+  && chmod +x /usr/bin/tini
 ENTRYPOINT ["/usr/bin/tini", "--"]
-
-# Configure environment
-ENV BASICUSER basicuser
-ENV BASICUSER_UID 1000
-
-# Create a non-priviledge user that will run the services
-RUN useradd -m -s /bin/bash -N -u $BASICUSER_UID $BASICUSER
 
 ADD . /work
 RUN mkdir /work/bin
 WORKDIR /work
-RUN chown -R basicuser /work
-USER $BASICUSER
 ENV HOME /work
 
 # Install Python 3 from miniconda
-RUN wget -O miniconda.sh \
+RUN curl -o miniconda.sh \
   https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh \
   && bash miniconda.sh -b -p /work/miniconda \
   && rm miniconda.sh

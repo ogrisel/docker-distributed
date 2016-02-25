@@ -33,3 +33,6 @@ networks:
   front:
     # Enable multi-host communication
     driver: overlay
+
+    # For single-host tests:
+    #driver: bridge
