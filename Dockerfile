@@ -41,6 +41,7 @@ RUN conda update -y python conda && conda install -y \
   notebook \
   ipywidgets \
   terminado \
+  psutil \
   && conda clean -yt
 
 # Install the master branch of distributed and dask
