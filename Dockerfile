@@ -35,7 +35,7 @@ RUN wget -O miniconda.sh \
   && rm miniconda.sh
 
 ENV PATH="/work/bin:/work/miniconda/bin:$PATH"
-RUN conda update -y conda && conda install -y \
+RUN conda update -y python conda && conda install -y \
   pip \
   setuptools \
   notebook \
