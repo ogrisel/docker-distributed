@@ -2,7 +2,8 @@ version: "2"
 
 services:
   jupyter:
-    build: .
+    #build: .
+    image: ogrisel/distributed:latest
     command: jupyter notebook --ip='*' --no-browser
     ports:
        - "8888:8888"
@@ -13,7 +14,8 @@ services:
     container_name: jupyter
 
   dscheduler:
-    build: .
+    #build: .
+    image: ogrisel/distributed:latest
     ports:
      - "8786:8786"
     command: dscheduler --host dscheduler
@@ -22,7 +24,8 @@ services:
     container_name: dscheduler
 
   dworker:
-    build: .
+    #build: .
+    image: ogrisel/distributed:latest
     command: dworker dscheduler:8786
     networks:
       - front
