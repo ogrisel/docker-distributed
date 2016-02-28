@@ -1,0 +1,22 @@
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  labels:
+    name: dscheduler
+  name: dscheduler
+spec:
+  replicas: 1
+  selector:
+    name: dscheduler
+  template:
+    metadata:
+      labels:
+        name: dscheduler
+    spec:
+      containers:
+        - name: dscheduler
+          image: ogrisel/distributed:latest
+          args: ["dscheduler", "--host", "dscheduler"]
+          ports:
+          - name: rpc
+            containerPort: 8786
