@@ -5,6 +5,8 @@ metadata:
   labels:
     name: jupyter-notebook
 spec:
+  # The LoadBalancer type is required to get a public IP
+  # address when running on Google Container Engine.
   type: LoadBalancer
   ports:
     - port: 80
