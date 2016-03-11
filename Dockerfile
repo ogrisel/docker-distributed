@@ -5,6 +5,7 @@ RUN apt-get update -yqq  && apt-get install -yqq \
   wget \
   bzip2 \
   git \
+  libglib2.0-0 \
   && rm -rf /var/lib/apt/lists/*
 
 # Install Tini
