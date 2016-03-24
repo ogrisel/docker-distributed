@@ -8,7 +8,7 @@ services:
     ports:
        - "8888:8888"
     networks:
-      - front
+      - distributed
     links:
         - dscheduler
     container_name: jupyter
@@ -20,7 +20,7 @@ services:
      - "8786:8786"
     command: dscheduler --host dscheduler
     networks:
-      - front
+      - distributed
     container_name: dscheduler
 
   dworker:
@@ -28,11 +28,11 @@ services:
     image: ogrisel/distributed:latest
     command: dworker dscheduler:8786
     networks:
-      - front
+      - distributed
     links:
         - dscheduler
 
 networks:
-  front:
+  distributed:
     # Enable multi-host communication
     driver: overlay
