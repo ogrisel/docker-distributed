@@ -43,6 +43,7 @@ RUN conda update -y python conda && conda install -y \
   ipywidgets \
   terminado \
   psutil \
+  pandas \
   && conda clean -yt
 
 # Install the master branch of distributed and dask
