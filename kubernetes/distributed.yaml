@@ -11,6 +11,20 @@ spec:
   selector:
     name: dscheduler
 ---
+aapiVersion: v1
+kind: Service
+metadata:
+  name: dscheduler-status
+  labels:
+    name: dscheduler-status
+spec:
+  type: LoadBalancer
+  ports:
+    - port: 8787
+      targetPort: 8787
+  selector:
+    name: dscheduler
+---
 apiVersion: v1
 kind: ReplicationController
 metadata:
