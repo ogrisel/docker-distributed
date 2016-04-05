@@ -44,6 +44,7 @@ RUN conda update -y python conda && conda install -y \
   terminado \
   psutil \
   pandas \
+  bokeh \
   && conda clean -yt
 
 # Install the master branch of distributed and dask
