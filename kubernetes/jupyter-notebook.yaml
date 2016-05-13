@@ -32,7 +32,7 @@ spec:
       containers:
         - name: jupyter-notebook
           image: ogrisel/distributed:latest
-          args: ["jupyter", "notebook", "--ip='*'", "--no-browser"]
+          args: ["start-notebook.sh"]
           ports:
           - name: http
             containerPort: 8888

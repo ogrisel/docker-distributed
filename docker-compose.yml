@@ -2,9 +2,8 @@ version: "2"
 
 services:
   jupyter:
-    #build: .
     image: ogrisel/distributed:latest
-    command: jupyter notebook --ip='*' --no-browser
+    command: start-notebook.sh
     ports:
        - "8888:8888"
     networks:
@@ -14,20 +13,18 @@ services:
     container_name: jupyter
 
   dscheduler:
-    #build: .
     image: ogrisel/distributed:latest
     ports:
      - "8786:8786"
      - "8787:8787"
-    command: dscheduler --host dscheduler
+    command: start-dscheduler.sh
     networks:
       - distributed
     container_name: dscheduler
 
   dworker:
-    #build: .
     image: ogrisel/distributed:latest
-    command: dworker dscheduler:8786
+    command: start-dworker.sh
     networks:
       - distributed
     links:
@@ -36,4 +33,5 @@ services:
 networks:
   distributed:
     # Enable multi-host communication
-    driver: overlay
+    # driver: overlay
+    driver: bridge
