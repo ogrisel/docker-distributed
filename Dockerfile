@@ -58,5 +58,9 @@ COPY start-dworker.sh ./bin/
 COPY start-dscheduler.sh ./bin/
 COPY examples examples
 
+COPY bokeh-0.11.1-fix-4325.diff .
+COPY install-bokeh-whitelist-fix.sh ./bin/
+RUN install-bokeh-whitelist-fix.sh
+
 # Make it possible to do interactive admin/debug tasks with docker exec
 RUN chown -R $BASICUSER /work

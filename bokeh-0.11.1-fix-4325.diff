@@ -1,0 +1,71 @@
+diff --git a/bokeh/server/server.py b/bokeh/server/server.py
+index 0cc8418..5350aba 100644
+--- a/bokeh/server/server.py
++++ b/bokeh/server/server.py
+@@ -22,6 +22,10 @@ def _create_hosts_whitelist(host_list, port):
+ 
+     hosts = []
+     for host in host_list:
++        if host == '*':
++            log.warn('Using host wildcard is insecure.')
++            hosts.append(host)
++            continue
+         parts = host.split(':')
+         if len(parts) == 1:
+             if parts[0] == "":
+@@ -192,4 +196,3 @@ class Server(object):
+         from bokeh.util.browser import view
+         url = "http://localhost:%d%s%s" % (self.port, self.prefix, app_path)
+         view(url, browser=browser, new=new)
+-
+diff --git a/bokeh/server/tornado.py b/bokeh/server/tornado.py
+index 6940195..655c168 100644
+--- a/bokeh/server/tornado.py
++++ b/bokeh/server/tornado.py
+@@ -30,16 +30,28 @@ def check_whitelist(request_host, whitelist):
+     ''' Check a given request host against a whitelist.
+ 
+     '''
+-    if request_host not in whitelist:
+-
+-        # see if the request came with no port, assume port 80 in that case
+-        if len(request_host.split(':')) == 1:
+-            host = request_host + ":80"
+-            return host in whitelist
++    if ':' in request_host:
++        request_host, request_port = request_host.rsplit(':', 1)
++    else:
++        # assume port 80 by default
++        request_port = '80'
++
++    for accepted_host in whitelist:
++        if ':' in accepted_host:
++            accepted_host, accepted_port = accepted_host.rsplit(':', 1)
+         else:
+-            return False
++            # accept any port by default
++            accepted_port = None
++
++        if accepted_port is not None and accepted_port != request_port:
++            # Port information is required and does not match.
++            continue
++
++        if accepted_host == '*' or request_host == accepted_host:
++            return True
+ 
+-    return True
++    # No match found
++    return False
+ 
+ 
+ def _whitelist(handler_class):
+@@ -48,7 +60,8 @@ def _whitelist(handler_class):
+     old_prepare = handler_class.prepare
+     def _prepare(self, *args, **kw):
+         if not check_whitelist(self.request.host, self.application._hosts):
+-            log.info("Rejected connection from host '%s' because it is not in the --host whitelist" % self.request.host)
++            log.info("Rejected connection from host '%s' because it is not in the --host whitelist: %s" %
++                     (self.request.host, ", ".join(sorted(self.application._hosts))))
+             raise HTTPError(403)
+         return old_prepare(self, *args, **kw)
+     _prepare.patched = True
