@@ -33,5 +33,6 @@ services:
 networks:
   distributed:
     # Enable multi-host communication
-    # driver: overlay
-    driver: bridge
+    driver: overlay
+    # Single host communication
+    #driver: bridge
