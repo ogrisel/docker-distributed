@@ -8,6 +8,10 @@ spec:
   ports:
     - port: 8786
       targetPort: 8786
+      name: dscheduler-tcp
+    - port: 9786
+      targetPort: 9786
+      name: dscheduler-http
   selector:
     name: dscheduler
 ---
@@ -55,7 +59,7 @@ metadata:
     name: dworker
   name: dworker
 spec:
-  replicas: 5
+  replicas: 3
   selector:
     name: dworker
   template:
