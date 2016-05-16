@@ -25,15 +25,27 @@ The Kubernetes API is provided as a hosted service by:
 - [OpenShift by Red Hat](https://www.openshift.com/)
 
 
+DISCLAIMER: the configuration in this repository is not secure. If you want to
+use this in production, please make sure to setup an HTTPS reverse proxy instead
+of exposing the Jupyter 8888 port and the distributed service ports on a public
+IP address and protect the Jupyter notebook access with a password.
+
+If you want to setup a multi-user environment you might also want to extend this
+configuration to use [Jupyter Hub](https://jupyterhub.readthedocs.io/en/latest/)
+instead of accessing a Jupyter notebook server directly. Please note however
+that the distributed workers will be run using the same unix user and therefore
+this sample configuration cannot be used to implement proper multi-tenancy.
+
+
 ## The distributed docker image
 
 The `Dockerfile` file in this repo can be used to build a docker image
 with all the necessary tools to run our cluster, in particular:
 
-- `conda` and `pip`,
-- `Jupyter`,
+- `conda` and `pip` to install additional tools and libraries,
+- `Jupyter` for the notebook interface accessed from any web browser,
 - `dask` and `distributed`,
-- `bokeh` (useful for the [cluster monitoring web interface](
+- `psutil` and `bokeh` (useful for the [cluster monitoring web interface](
    https://distributed.readthedocs.io/en/latest/web.html)).
 
 It is also possible to install additional tools using the `conda` and `pip`
