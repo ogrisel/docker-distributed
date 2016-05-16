@@ -16,6 +16,7 @@ services:
     image: ogrisel/distributed:latest
     ports:
      - "8786:8786"
+     - "9786:9786"
      - "8787:8787"
     command: start-dscheduler.sh
     networks:
