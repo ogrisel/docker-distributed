@@ -59,7 +59,7 @@ https://hub.docker.com/ogrisel/distributed/
 Pull and run the latest version of this container on your local docker engine as
 follow:
 
-```bash
+```
 $ docker pull ogrisel/distributed:latest
 latest: Pulling from ogrisel/distributed
 [...]
@@ -74,7 +74,7 @@ total 56
 Alternatively it is also possible to re-build the `ogrisel/distributed` image
 using the `docker build` command:
 
-```bash
+```
 $ git clone https://github.com/ogrisel/docker-distributed
 $ cd docker-distributed
 $ docker build -t ogrisel/distributed .
@@ -117,7 +117,7 @@ to install the `docker` client and the `carina` command line tool.
 Once you are setup, create a new carina cluster and configure your shell
 environment variables so that your `docker` client can access it:
 
-```bash
+```
 $ carina create --nodes=3 --wait cluster-1
 ClusterName         Flavor              Nodes               AutoScale           Status
 cluster-1           container1-4G       3                   false               active
@@ -128,7 +128,7 @@ If you installed the `dvm` tool, you can make sure to use a version of a the
 docker client that matches the version of docker of the carina cluster by
 typing:
 
-```bash
+```
 $ dvm use
 Now using Docker 1.10.3
 ```
@@ -138,14 +138,14 @@ ps` and `docker info` commands.
 
 Install the `docker-compose` client:
 
-```bash
+```
 $ pip install docker-compose
 ```
 
 Deploy the Jupyter and distributed services as conigured in the
 `docker-compose.yml` file of this repo:
 
-```bash
+```
 $ git clone https://github.com/ogrisel/docker-distributed
 $ cd docker-distributed
 $ docker-compose up -d
@@ -162,7 +162,7 @@ Creating jupyter
 Increase the number of `distributed` workers to match the number of nodes in the
 carina cluster:
 
-```bash
+```
 $ docker-compose scale dworker=3
 Creating and starting dockerdistributed_dworker_2 ... done
 Creating and starting dockerdistributed_dworker_3 ... done
@@ -191,7 +191,7 @@ It is often useful to check that you don't get any error in the logs when
 running the computation. You can access the aggregate logs of all the running
 services with:
 
-```bash
+```
 $ docker-compose logs -f
 [...]
 ```
@@ -199,7 +199,7 @@ $ docker-compose logs -f
 Sometimes it can also be useful to open a root shell session in the container
 that run Jupyter notebook process with `docker exec`:
 
-```bash
+```
 $ docker exec -ti jupyter bash
 root@aff49b550f0c:/work# ls
 
