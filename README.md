@@ -24,6 +24,13 @@ The Kubernetes API is provided as a hosted service by:
 - [Google Container Engine](https://cloud.google.com/container-engine/)
 - [OpenShift by Red Hat](https://www.openshift.com/)
 
+Here is the table of contents for this documentation:
+
+- [The docker-distributed image](#the-docker-distributed-image)
+- [Setting up a cluster using Kubernetes](#setting-up-a-cluster-using-kubernetes)
+  - [Example setup with Google Container Engine](#example-setup-with-google-container-engine)
+- [Setting up a cluster using Docker Compose](#setting-up-a-cluster-using-docker-compose)
+  - [Example setup with Carina](#example-setup-with-carina)
 
 DISCLAIMER: the configuration in this repository is not secure. If you want to
 use this in production, please make sure to setup an HTTPS reverse proxy instead
@@ -36,13 +43,8 @@ instead of accessing a Jupyter notebook server directly. Please note however
 that the distributed workers will be run using the same unix user and therefore
 this sample configuration cannot be used to implement proper multi-tenancy.
 
-- [The distributed docker image](#the-distributed-docker-image)
-- [Setting up a cluster using Kubernetes](#setting-up-a-cluster-using-kubernetes)
-  - [Example setup with Google Container Engine](#example-setup-with-google-container-engine)
-- [Setting up a cluster using Docker Compose](#setting-up-a-cluster-using-docker-compose)
-  - [Example setup with Carina](#example-setup-with-carina)
 
-## The distributed docker image
+## The docker-distributed image
 
 The `Dockerfile` file in this repo can be used to build a docker image
 with all the necessary tools to run our cluster, in particular:
