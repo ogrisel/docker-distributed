@@ -183,17 +183,23 @@ snippet in a new notebook cell:
 <Executor: scheduler=dscheduler:8786 workers=3 threads=36>
 ```
 
-Please refer the [distributed documentation](https://distributed.readthedocs.io)
-to learn how to use the executor interface to schedule computation on the
-cluster.
+Please refer to the [distributed
+documentation](https://distributed.readthedocs.io) to learn how to use the
+executor interface to schedule computation on the cluster.
 
 It is often useful to check that you don't get any error in the logs when
-running the computation.
+running the computation. You can access the aggregate logs of all the running
+services with:
 
-Sometimes it can be useful to open a root shell session in the container that
-run Jupyter notebook process with `docker exec`:
-
+```bash
+$ docker-compose logs -f
+[...]
 ```
+
+Sometimes it can also be useful to open a root shell session in the container
+that run Jupyter notebook process with `docker exec`:
+
+```bash
 $ docker exec -ti Jupyter bash
 root@aff49b550f0c:/work# ls
 
