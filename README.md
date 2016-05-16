@@ -36,6 +36,11 @@ instead of accessing a Jupyter notebook server directly. Please note however
 that the distributed workers will be run using the same unix user and therefore
 this sample configuration cannot be used to implement proper multi-tenancy.
 
+- [The distributed docker image](#the-distributed-docker-image)
+- [Setting up a cluster using Kubernetes](#setting-up-a-cluster-using-kubernetes)
+  - [Example setup with Google Container Engine](#example-setup-with-google-container-engine)
+- [Setting up a cluster using Docker Compose](#setting-up-a-cluster-using-docker-compose)
+  - [Example setup with Carina](#example-setup-with-carina)
 
 ## The distributed docker image
 
