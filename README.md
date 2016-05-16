@@ -2,7 +2,7 @@
 
 This repo hosts some sample configuration to set up docker-containerized
 environments for interactive cluster computing in Python with [Jupyter
-notebook](http://jupyter.org/) and
+notebook](http://Jupyter.org/) and
 [distributed](https://distributed.readthedocs.org/)  possibly in conjunction
 with [dask](http://dask.pydata.org/) and other tools from the PyData and SciPy
 ecosystems.
@@ -31,9 +31,9 @@ The `Dockerfile` file in this repo can be used to build a docker image
 with all the necessary tools to run our cluster, in particular:
 
 - `conda` and `pip`,
-- `jupyter`,
+- `Jupyter`,
 - `dask` and `distributed`,
-- `bokeh` (useful for the cluster monitoring [web interface](
+- `bokeh` (useful for the [cluster monitoring web interface](
    https://distributed.readthedocs.io/en/latest/web.html)).
 
 It is also possible to install additional tools using the `conda` and `pip`
@@ -71,7 +71,7 @@ $ docker build -t ogrisel/distributed .
 
 This image will be used to run 3 types of services:
 
-- the `jupyter notebook` server,
+- the `Jupyter notebook` server,
 - the `distributed` scheduler service,
 - one `distributed` worker per-host in the compute cluster.
 
@@ -107,10 +107,19 @@ environment variables so that your `docker` client can access it:
 
 ```bash
 $ carina create --nodes=3 --wait cluster-1
+ClusterName         Flavor              Nodes               AutoScale           Status
+cluster-1           container1-4G       3                   false               active
 $ eval $(carina env cluster-1)
 ```
 
-TODO dvm
+If you installed the `dvm` tool, you can make sure to use a version of a the
+docker client that matches the version of docker of the carina cluster by
+typing:
+
+```bash
+$ dvm use
+Now using Docker 1.10.3
+```
 
 Check that you `docker` client can access the carina cluster using the `docker
 ps` and `docker info` commands.
@@ -121,4 +130,69 @@ Install the `docker-compose` client:
 $ pip install docker-compose
 ```
 
-TODO
+Deploy the Jupyter and distributed services as conigured in the
+`docker-compose.yml` file of this repo:
+
+```bash
+$ git clone https://github.com/ogrisel/docker-distributed
+$ cd docker-distributed
+$ docker-compose up -d
+Creating network "dockerdistributed_distributed" with driver "overlay"
+Pulling dscheduler (ogrisel/distributed:latest)...
+2fc95c02-b444-4730-bfb1-bd662e2e044e-n3: Pulling ogrisel/distributed:latest... : downloaded
+2fc95c02-b444-4730-bfb1-bd662e2e044e-n1: Pulling ogrisel/distributed:latest... : downloaded
+2fc95c02-b444-4730-bfb1-bd662e2e044e-n2: Pulling ogrisel/distributed:latest... : downloaded
+Creating dscheduler
+Creating dockerdistributed_dworker_1
+Creating Jupyter
+```
+
+Increase the number of `distributed` workers to match the number of nodes in the
+carina cluster:
+
+```bash
+$ docker-compose scale dworker=3
+Creating and starting dockerdistributed_dworker_2 ... done
+Creating and starting dockerdistributed_dworker_3 ... done
+```
+
+Use the `docker ps` command to find out the public IP address and port of the
+public Jupyter notebook interface (on port 8888) and the [distributed monitoring
+web interface](https://distributed.readthedocs.io/en/latest/web.html) (on port
+8787 possibly on a different node). You can run the example notebooks from the
+`examples/` folder via the Jupyter interface on port 8888. In particular note
+that the distributed scheduler of the cluster can be reached from any node under
+the host name `dscheduler` on port 8786. You can check by typing the following
+snippet in a new notebook cell:
+
+```python
+>>> from distributed import Executor
+>>> e = Executor('dscheduler:8786')
+<Executor: scheduler=dscheduler:8786 workers=3 threads=36>
+```
+
+Please refer the [distributed documentation](https://distributed.readthedocs.io)
+to learn how to use the executor interface to schedule computation on the
+cluster.
+
+It is often useful to check that you don't get any error in the logs when
+running the computation.
+
+Sometimes it can be useful to open a root shell session in the container that
+run Jupyter notebook process with `docker exec`:
+
+```
+$ docker exec -ti Jupyter bash
+root@aff49b550f0c:/work# ls
+
+bin  examples  miniconda  requirements.txt
+```
+
+When you are done with your computation, upload your results to some external
+storage server or to github and don't forget to shutdown the cluster:
+
+```
+$ docker-compose down
+$ carina rm cluster-1
+$ dvm deactivate
+```
