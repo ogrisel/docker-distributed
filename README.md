@@ -2,7 +2,7 @@
 
 This repo hosts some sample configuration to set up docker-containerized
 environments for interactive cluster computing in Python with [Jupyter
-notebook](http://Jupyter.org/) and
+notebook](http://jupyter.org/) and
 [distributed](https://distributed.readthedocs.org/)  possibly in conjunction
 with [dask](http://dask.pydata.org/) and other tools from the PyData and SciPy
 ecosystems.
@@ -43,7 +43,7 @@ The `Dockerfile` file in this repo can be used to build a docker image
 with all the necessary tools to run our cluster, in particular:
 
 - `conda` and `pip` to install additional tools and libraries,
-- `Jupyter` for the notebook interface accessed from any web browser,
+- `jupyter` for the notebook interface accessed from any web browser,
 - `dask` and `distributed`,
 - `psutil` and `bokeh` (useful for the [cluster monitoring web interface](
    https://distributed.readthedocs.io/en/latest/web.html)).
@@ -83,7 +83,7 @@ $ docker build -t ogrisel/distributed .
 
 This image will be used to run 3 types of services:
 
-- the `Jupyter notebook` server,
+- the `jupyter notebook` server,
 - the `distributed` scheduler service,
 - one `distributed` worker per-host in the compute cluster.
 
@@ -156,7 +156,7 @@ Pulling dscheduler (ogrisel/distributed:latest)...
 2fc95c02-b444-4730-bfb1-bd662e2e044e-n2: Pulling ogrisel/distributed:latest... : downloaded
 Creating dscheduler
 Creating dockerdistributed_dworker_1
-Creating Jupyter
+Creating jupyter
 ```
 
 Increase the number of `distributed` workers to match the number of nodes in the
@@ -200,7 +200,7 @@ Sometimes it can also be useful to open a root shell session in the container
 that run Jupyter notebook process with `docker exec`:
 
 ```bash
-$ docker exec -ti Jupyter bash
+$ docker exec -ti jupyter bash
 root@aff49b550f0c:/work# ls
 
 bin  examples  miniconda  requirements.txt
