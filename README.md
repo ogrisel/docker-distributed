@@ -24,6 +24,9 @@ The Kubernetes API is provided as a hosted service by:
 - [Google Container Engine](https://cloud.google.com/container-engine/)
 - [OpenShift by Red Hat](https://www.openshift.com/)
 
+Alternatively it is possible to [install and manage Kubernetes by
+your-self](http://kubernetes.io/docs/getting-started-guides/).
+
 Here is the table of contents for this documentation:
 
 - [The docker-distributed image](#the-docker-distributed-image)
@@ -106,7 +109,31 @@ configuration files in the `kubernetes/` folder of this repository.
 
 ### Example setup with Google Container Engine
 
-TODO
+Register on the [Google Cloud Platform](https://cloud.google.com/), setup a
+billing account and create a project with the Google Compute Engine API enabled.
+
+Install the client SDK that includes the
+[gcloud](https://cloud.google.com/sdk/gcloud/) command line interface or use the
+in-browser Google Cloud Shell where `gcloud` installed.
+
+Ensure that your client SDK is up to date:
+
+```
+$ gcloud components update
+```
+
+At the time of writing, the latest generation of Intel CPU architectures
+available on GCE is the Haswell architecture. It is available only in [specific
+zones](https://cloud.google.com/compute/docs/regions-zones/regions-zones). Using
+modern CPU architectures is highly recommended for vector intensive CPU
+workloads. In particular it makes it possible to get the most of optimized
+linear algebra routines implemented by OpenBLAS and MKL internally used by NumPy
+and SciPy for instance. Let us configure the zone used to provision the cluster
+and create it:
+
+```
+$ gcloud config set compute/zone europe-west1-d
+```
 
 ## Setting up a cluster using Docker Compose
 
