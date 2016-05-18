@@ -133,7 +133,143 @@ and create it:
 
 ```
 $ gcloud config set compute/zone europe-west1-d
+$ gcloud container clusters create cluster-1 \
+    --num-nodes 3 \
+    --machine-type n1-highcpu-32 \
+    --scopes bigquery,storage-rw \
+    --wait
+Creating cluster cluster-1...done.
+Created [https://container.googleapis.com/v1/projects/ogrisel/zones/europe-west1-d/clusters/cluster-1].
+kubeconfig entry generated for cluster-1.
+NAME       ZONE            MASTER_VERSION  MASTER_IP        MACHINE_TYPE   NODE_VERSION  NUM_NODES  STATUS
+cluster-1  europe-west1-d  1.2.4           130.211.103.197  n1-highcpu-32  1.2.4         3          RUNNING
 ```
+
+Other [machine types](https://cloud.google.com/compute/docs/machine-types) are
+available if you would rather trade CPUs for RAM for instance. You can also
+grant access to other GCP services via `--scopes` if you need. See the
+[documentation](https://cloud.google.com/sdk/gcloud/reference/container/clusters/create)
+for more details.
+
+We further need to fetch the cluster credentials to get `kubectl` authorized
+to connect to the newly provisioned cluster:
+
+```
+$ gcloud container clusters get-credentials cluster-1
+Fetching cluster endpoint and auth data.
+kubeconfig entry generated for cluster-1.
+```
+
+We can now deploy the kubernetes configuration onto the cluster:
+
+```
+$ git clone https://github.com/ogrisel/docker-distributed
+$ cd docker-distributed
+$ kubectl create -f kubernetes/
+service "dscheduler" created
+service "dscheduler-status" created
+replicationcontroller "dscheduler" created
+replicationcontroller "dworker" created
+service "jupyter-notebook" created
+replicationcontroller "jupyter-notebook" created
+```
+The containers are running in "pods":
+
+```
+$ kubectl get pods
+NAME                     READY     STATUS              RESTARTS   AGE
+dscheduler-hebul         0/1       ContainerCreating   0          32s
+dworker-2dpr1            0/1       ContainerCreating   0          32s
+dworker-gsgja            0/1       ContainerCreating   0          32s
+dworker-vm3vg            0/1       ContainerCreating   0          32s
+jupyter-notebook-z58dm   0/1       ContainerCreating   0          32s
+```
+
+we can get the logs of a specific pod with `kubectl logs`:
+
+```
+$ kubectl logs -f dscheduler-hebul
+distributed.scheduler - INFO - Scheduler at:       10.115.249.189:8786
+distributed.scheduler - INFO -      http at:       10.115.249.189:9786
+distributed.scheduler - INFO -  Bokeh UI at:  http://10.115.249.189:8787/status/
+distributed.core - INFO - Connection from 10.112.2.3:50873 to Scheduler
+distributed.scheduler - INFO - Register 10.112.2.3:59918
+distributed.scheduler - INFO - Starting worker compute stream, 10.112.2.3:59918
+distributed.core - INFO - Connection from 10.112.0.6:55149 to Scheduler
+distributed.scheduler - INFO - Register 10.112.0.6:55103
+distributed.scheduler - INFO - Starting worker compute stream, 10.112.0.6:55103
+bokeh.command.subcommands.serve - INFO - Check for unused sessions every 50 milliseconds
+bokeh.command.subcommands.serve - INFO - Unused sessions last for 1 milliseconds
+bokeh.command.subcommands.serve - INFO - Starting Bokeh server on port 8787 with applications at paths ['/status', '/tasks']
+distributed.core - INFO - Connection from 10.112.1.1:59452 to Scheduler
+distributed.core - INFO - Connection from 10.112.1.1:59453 to Scheduler
+distributed.core - INFO - Connection from 10.112.1.4:48952 to Scheduler
+distributed.scheduler - INFO - Register 10.112.1.4:54760
+distributed.scheduler - INFO - Starting worker compute stream, 10.112.1.4:54760
+```
+
+we can also execute arbitrary commands inside the running containers with
+`kubectl exec`, for instance to open an interactive shell session for debugging
+purposes:
+
+```
+$ kubectl exec -ti dscheduler-hebul bash
+root@dscheduler-hebul:/work# ls -l examples/
+total 56
+-rw-r--r-- 1 basicuser root  1344 May 17 11:29 distributed_joblib_backend.py
+-rw-r--r-- 1 basicuser root 33712 May 17 11:29 sklearn_parameter_search.ipynb
+-rw-r--r-- 1 basicuser root 14407 May 17 11:29 sklearn_parameter_search_joblib.ipynb
+```
+
+Our kubernetes configuration publishes HTTP endpoints with the `LoadBalancer`
+type on external IP addresses (those can take one minute or two to show up):
+
+```
+$ kubectl get services
+NAME                CLUSTER-IP       EXTERNAL-IP      PORT(S)             AGE
+dscheduler          10.115.249.189   <none>           8786/TCP,9786/TCP   4m
+dscheduler-status   10.115.244.201   130.211.50.206   8787/TCP            4m
+jupyter-notebook    10.115.254.255   146.148.114.90   80/TCP              4m
+kubernetes          10.115.240.1     <none>           443/TCP             10m
+```
+
+This means that is possible to point a browser to:
+
+- http://146.148.114.90 to get access to the Jupyter notebook server
+- http://130.211.50.206:8787/status to get the [distributed monitoring
+  web interface](https://distributed.readthedocs.io/en/latest/web.html).
+
+You can run the example notebooks from the `examples/` folder via the Jupyter
+interface. In particular note that the distributed scheduler of the cluster
+can be reached from any node under the host name `dscheduler` on port 8786.
+You can check by typing the following snippet in a new notebook cell:
+
+```python
+>>> from distributed import Executor
+>>> e = Executor('dscheduler:8786')
+<Executor: scheduler=dscheduler:8786 workers=3 threads=36>
+```
+
+Please refer to the [distributed
+documentation](https://distributed.readthedocs.io) to learn how to use the
+executor interface to schedule computation on the cluster.
+
+Once you are down with the analysis don't forget to save the results to some
+external storage (for instance push your notebooks to some external git
+repository). Then you can shutdown the cluster with:
+
+```
+$ gcloud container clusters delete cluster-1
+```
+
+WARNING: deploying kubernetes services with the `type=LoadBalancer` will cause
+GCP to automatically provision dedicated firewall rules and load balancer
+instances that are not automatically deleted when you shutdown the GKE cluster.
+You have to delete those manually for instance by going to the "Networking" tab
+of the Google Cloud Console web interface. Those additional firewall rules and
+load balancers are billed on an hourly basis so don't forget to delete them
+when you don't need them anymore.
+
 
 ## Setting up a cluster using Docker Compose
 
@@ -205,21 +341,10 @@ Creating and starting dockerdistributed_dworker_3 ... done
 Use the `docker ps` command to find out the public IP address and port of the
 public Jupyter notebook interface (on port 8888) and the [distributed monitoring
 web interface](https://distributed.readthedocs.io/en/latest/web.html) (on port
-8787 possibly on a different node). You can run the example notebooks from the
-`examples/` folder via the Jupyter interface on port 8888. In particular note
-that the distributed scheduler of the cluster can be reached from any node under
-the host name `dscheduler` on port 8786. You can check by typing the following
-snippet in a new notebook cell:
+8787 possibly on a different node).
 
-```python
->>> from distributed import Executor
->>> e = Executor('dscheduler:8786')
-<Executor: scheduler=dscheduler:8786 workers=3 threads=36>
-```
-
-Please refer to the [distributed
-documentation](https://distributed.readthedocs.io) to learn how to use the
-executor interface to schedule computation on the cluster.
+As in the kubernetes example above you can run the example notebooks from the
+`examples/` folder via the Jupyter interface on port 8888.
 
 It is often useful to check that you don't get any error in the logs when
 running the computation. You can access the aggregate logs of all the running
