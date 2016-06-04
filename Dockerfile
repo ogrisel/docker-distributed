@@ -36,8 +36,14 @@ RUN conda update -y python conda && conda install -y \
   ipywidgets \
   terminado \
   psutil \
+  numpy \
+  scipy \
   pandas \
   bokeh \
+  matplotlib \
+  scikit-learn \
+  statsmodels \
+  scikit-image \
   && conda clean -tipsy
 
 # Install the master branch of distributed and dask
@@ -62,5 +68,16 @@ COPY bokeh-0.11.1-fix-4325.diff .
 COPY install-bokeh-whitelist-fix.sh ./bin/
 RUN install-bokeh-whitelist-fix.sh
 
-# Make it possible to do interactive admin/debug tasks with docker exec
+# Configure matplotlib to avoid using QT
+COPY matplotlibrc /work/.config/matplotlib/matplotlibrc
+
+# Ensure that the /work folder is writeable by the unpriviledged user:
 RUN chown -R $BASICUSER /work
+
+# Preload the matplotlib font cache
+USER $BASICUSER
+RUN /work/miniconda/bin/python -c "import matplotlib.pyplot"
+
+# Switch back to root to make it possible to do interactive admin/debug as
+# root tasks with docker exec
+USER root
