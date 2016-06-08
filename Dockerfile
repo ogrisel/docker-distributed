@@ -15,12 +15,14 @@ ENV LANG=C.UTF-8
 # Folder to install non-system tools and serve as workspace for the notebook
 # user
 RUN mkdir -p /work/bin
-WORKDIR /work
 
 # Create a non-priviledge user that will run the services
 ENV BASICUSER basicuser
 ENV BASICUSER_UID 1000
 RUN useradd -m -d /work -s /bin/bash -N -u $BASICUSER_UID $BASICUSER
+RUN chown $BASICUSER /work
+USER $BASICUSER
+WORKDIR /work
 
 # Install Python 3 from miniconda
 RUN wget -O miniconda.sh \
@@ -29,7 +31,25 @@ RUN wget -O miniconda.sh \
   && rm miniconda.sh
 
 ENV PATH="/work/bin:/work/miniconda/bin:$PATH"
-RUN conda update -y python conda && conda install -y \
+
+
+# Install matplotlib and scikit-image without Qt
+RUN conda update -y python conda && \
+  conda install -y --no-deps \
+  matplotlib \
+  cycler \
+  freetype \
+  libpng \
+  pyparsing \
+  pytz \
+  python-dateutil \
+  scikit-image \
+  networkx \
+  pillow \
+  six \
+  && conda clean -tipsy
+
+RUN conda install -y \
   pip \
   setuptools \
   notebook \
@@ -40,23 +60,14 @@ RUN conda update -y python conda && conda install -y \
   scipy \
   pandas \
   bokeh \
-  matplotlib \
   scikit-learn \
   statsmodels \
-  scikit-image \
   && conda clean -tipsy
+
 
 # Install the master branch of distributed and dask
 COPY requirements.txt .
-RUN pip install -r requirements.txt
-
-# Install Tini that necessary to properly run the notebook service in a docker
-# container:
-# http://jupyter-notebook.readthedocs.org/en/latest/public_server.html#docker-cmd
-ENV TINI_VERSION v0.9.0
-ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini /usr/bin/tini
-RUN chmod +x /usr/bin/tini
-ENTRYPOINT ["/usr/bin/tini", "--"]
+RUN pip install -r requirements.txt && rm -rf ~/.cache/pip/
 
 # Add local files at the end of the Dockerfule to limit cache busting
 COPY start-notebook.sh ./bin/
@@ -71,13 +82,18 @@ RUN install-bokeh-whitelist-fix.sh
 # Configure matplotlib to avoid using QT
 COPY matplotlibrc /work/.config/matplotlib/matplotlibrc
 
-# Ensure that the /work folder is writeable by the unpriviledged user:
-RUN chown -R $BASICUSER /work
-
-# Preload the matplotlib font cache
-USER $BASICUSER
-RUN /work/miniconda/bin/python -c "import matplotlib.pyplot"
+# Trigger creation of the matplotlib font cache
+ENV MATPLOTLIBRC /work/.config/matplotlib
+RUN python -c "import matplotlib.pyplot"
 
 # Switch back to root to make it possible to do interactive admin/debug as
 # root tasks with docker exec
 USER root
+
+# Install Tini that necessary to properly run the notebook service in a docker
+# container:
+# http://jupyter-notebook.readthedocs.org/en/latest/public_server.html#docker-cmd
+ENV TINI_VERSION v0.9.0
+ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini /usr/bin/tini
+RUN chmod +x /usr/bin/tini
+ENTRYPOINT ["/usr/bin/tini", "--"]
