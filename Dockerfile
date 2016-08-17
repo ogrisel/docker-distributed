@@ -75,10 +75,6 @@ COPY start-dworker.sh ./bin/
 COPY start-dscheduler.sh ./bin/
 COPY examples examples
 
-COPY bokeh-0.11.1-fix-4325.diff .
-COPY install-bokeh-whitelist-fix.sh ./bin/
-RUN install-bokeh-whitelist-fix.sh
-
 # Configure matplotlib to avoid using QT
 COPY matplotlibrc /work/.config/matplotlib/matplotlibrc
 
