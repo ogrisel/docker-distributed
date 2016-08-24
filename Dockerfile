@@ -85,6 +85,8 @@ RUN python -c "import matplotlib.pyplot"
 # Switch back to root to make it possible to do interactive admin/debug as
 # root tasks with docker exec
 USER root
+# Files added via COPY need a manual chown
+RUN chown $BASICUSER:users -R /work/.config /work/examples /work/bin /work/requirements.txt
 
 # Install Tini that necessary to properly run the notebook service in a docker
 # container:
