@@ -137,13 +137,18 @@ $ gcloud container clusters create cluster-1 \
     --num-nodes 3 \
     --machine-type n1-highcpu-32 \
     --scopes bigquery,storage-rw \
-    --wait
+    --preemptible \
+    --no-async
 Creating cluster cluster-1...done.
 Created [https://container.googleapis.com/v1/projects/ogrisel/zones/europe-west1-d/clusters/cluster-1].
 kubeconfig entry generated for cluster-1.
 NAME       ZONE            MASTER_VERSION  MASTER_IP        MACHINE_TYPE   NODE_VERSION  NUM_NODES  STATUS
 cluster-1  europe-west1-d  1.2.4           130.211.103.197  n1-highcpu-32  1.2.4         3          RUNNING
 ```
+The `--preemptible` flag makes it cheaper to run a temporary cluster for a couple
+of hours at the risk of seeing it shutdown at any moment. Please refer to the
+[documentation](https://cloud.google.com/container-engine/docs/preemptible-vm)
+for more details.
 
 Other [machine types](https://cloud.google.com/compute/docs/machine-types) are
 available if you would rather trade CPUs for RAM for instance. You can also
