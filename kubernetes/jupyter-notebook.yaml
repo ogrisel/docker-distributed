@@ -34,5 +34,12 @@ spec:
           image: ogrisel/distributed:latest
           args: ["start-notebook.sh"]
           ports:
-          - name: http
-            containerPort: 8888
+            - name: http
+              containerPort: 8888
+          volumeMounts:
+            - mountPath: /work
+              name: docker-distributed-repo
+      volumes:
+        - name: docker-distributed-repo
+          gitRepo:
+            repository: "https://github.com/ogrisel/docker-distributed"
