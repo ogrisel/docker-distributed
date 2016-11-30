@@ -37,8 +37,10 @@ spec:
             - name: http
               containerPort: 8888
           volumeMounts:
-            - mountPath: /work
+            - mountPath: /work/docker-distributed
               name: docker-distributed-repo
+      securityContext:
+        fsGroup: 1000
       volumes:
         - name: docker-distributed-repo
           gitRepo:
