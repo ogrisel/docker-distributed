@@ -250,9 +250,9 @@ can be reached from any node under the host name `dscheduler` on port 8786.
 You can check by typing the following snippet in a new notebook cell:
 
 ```python
->>> from distributed import Executor
->>> e = Executor('dscheduler:8786')
-<Executor: scheduler=dscheduler:8786 workers=3 threads=36>
+>>> from distributed import Client
+>>> c = Client('dscheduler:8786')
+<Client: scheduler=dscheduler:8786 workers=3 threads=36>
 ```
 
 Please refer to the [distributed
