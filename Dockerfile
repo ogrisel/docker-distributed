@@ -17,11 +17,15 @@ ENV LANG=C.UTF-8
 RUN mkdir -p /work/bin
 
 # Create a non-priviledge user that will run the services
-ENV BASICUSER basicuser
-ENV BASICUSER_UID 1000
-RUN useradd -m -d /work -s /bin/bash -N -u $BASICUSER_UID $BASICUSER
-RUN chown $BASICUSER /work
-USER $BASICUSER
+#ENV BASICUSER basicuser
+#ENV BASICUSER_UID 1000
+#RUN useradd -m -d /work -s /bin/bash -N -u $BASICUSER_UID $BASICUSER
+#RUN chown $BASICUSER /work
+#USER $BASICUSER
+
+# Deactivate basic user to make it easier to deal with volume permissions
+# for now
+ENV BASICUSER root
 WORKDIR /work
 
 # Install Python 3 from miniconda
