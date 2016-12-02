@@ -21,6 +21,7 @@ from keras.layers import Input, Embedding, Flatten, merge, Dense, Dropout
 from keras.layers import BatchNormalization
 from keras.models import Model
 from dask import delayed, compute
+from distributed import Client
 
 
 DEFAULT_LOSS = 'cross_entropy'
@@ -270,6 +271,7 @@ def _model_complexity_proxy(params):
 
 
 if __name__ == "__main__":
+    c = Client('dscheduler:8786')
     seed = 0
     n_params = 500
     all_combinations = list(ParameterGrid(SEARCH_SPACE))
@@ -281,4 +283,4 @@ if __name__ == "__main__":
         for split_idx in range(3):
             evaluations.append(delayed(evaluate_one)(
                 split_idx=split_idx, **params))
-    compute(*evaluations)
+    compute(*evaluations, get=c.get)

@@ -1,3 +1,5 @@
 __pycache__
 *.pyc
 .ipynb_checkpoints
+examples/ml-100k/
+examples/ml-100k.zip

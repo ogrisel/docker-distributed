@@ -8,8 +8,8 @@ def load_results_df(folder='results'):
     folder = Path(folder)
     results_dicts = []
     for p in sorted(folder.glob('**/results.json')):
-       with p.open('r') as f:
-           results_dicts.append(json.load(f))
+        with p.open('r') as f:
+            results_dicts.append(json.load(f))
     return pd.DataFrame.from_dict(results_dicts)
 
 
