@@ -17,8 +17,6 @@ spec:
 apiVersion: v1
 kind: ReplicationController
 metadata:
-  labels:
-    name: jupyter-notebook
   name: jupyter-notebook
 spec:
   replicas: 1
@@ -37,9 +35,15 @@ spec:
             - name: http
               containerPort: 8888
           volumeMounts:
-            - mountPath: /work
-              name: docker-distributed-repo
+            - name: docker-distributed-repo
+              mountPath: /work/repos
+            - name: nfs
+              mountPath: "/mnt"
+
       volumes:
         - name: docker-distributed-repo
           gitRepo:
             repository: "https://github.com/ogrisel/docker-distributed"
+        - name: nfs
+          persistentVolumeClaim:
+            claimName: nfs

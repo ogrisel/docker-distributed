@@ -71,3 +71,11 @@ spec:
         - name: dworker
           image: ogrisel/distributed:latest
           args: ["start-dworker.sh"]
+          volumeMounts:
+            # name must match the volume name below
+            - name: nfs
+              mountPath: "/mnt"
+      volumes:
+        - name: nfs
+          persistentVolumeClaim:
+            claimName: nfs
