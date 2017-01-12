@@ -46,7 +46,7 @@ spec:
     spec:
       containers:
         - name: dscheduler
-          image: ogrisel/distributed:latest
+          image: kforeman/distributed:latest
           args: ["start-dscheduler.sh"]
           ports:
           - name: rpc
@@ -69,5 +69,5 @@ spec:
     spec:
       containers:
         - name: dworker
-          image: ogrisel/distributed:latest
+          image: kforeman/distributed:latest
           args: ["start-dworker.sh"]

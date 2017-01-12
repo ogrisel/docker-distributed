@@ -1,5 +1,5 @@
 FROM debian:jessie
-MAINTAINER Olivier Grisel <olivier.grisel@ensta.org>
+MAINTAINER Kyle Foreman <kfor@uw.edu>
 
 RUN apt-get update -yqq  && apt-get install -yqq \
   wget \

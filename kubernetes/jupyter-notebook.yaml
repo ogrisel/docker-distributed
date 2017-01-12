@@ -31,7 +31,7 @@ spec:
     spec:
       containers:
         - name: jupyter-notebook
-          image: ogrisel/distributed:latest
+          image: kforeman/distributed:latest
           args: ["start-notebook.sh"]
           ports:
             - name: http
@@ -42,4 +42,4 @@ spec:
       volumes:
         - name: docker-distributed-repo
           gitRepo:
-            repository: "https://github.com/ogrisel/docker-distributed"
+            repository: "https://github.com/kforeman/docker-distributed"
