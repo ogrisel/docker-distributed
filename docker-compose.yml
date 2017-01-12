@@ -2,7 +2,7 @@ version: "2"
 
 services:
   jupyter:
-    image: ogrisel/distributed:latest
+    image: kforeman/distributed:latest
     command: start-notebook.sh
     ports:
        - "8888:8888"
@@ -13,7 +13,7 @@ services:
     container_name: jupyter
 
   dscheduler:
-    image: ogrisel/distributed:latest
+    image: kforeman/distributed:latest
     ports:
      - "8786:8786"
      - "9786:9786"
@@ -24,7 +24,7 @@ services:
     container_name: dscheduler
 
   dworker:
-    image: ogrisel/distributed:latest
+    image: kforeman/distributed:latest
     command: start-dworker.sh
     networks:
       - distributed

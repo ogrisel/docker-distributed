@@ -1,5 +1,5 @@
 FROM debian:jessie
-MAINTAINER Olivier Grisel <olivier.grisel@ensta.org>
+MAINTAINER Kyle Foreman <kfor@uw.edu>
 
 RUN apt-get update -yqq  && apt-get install -yqq \
   wget \
@@ -66,6 +66,8 @@ RUN conda install -y \
   bokeh \
   scikit-learn \
   statsmodels \
+  pytables \
+  seaborn \
   && conda clean -tipsy
 
 
