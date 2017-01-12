@@ -66,6 +66,8 @@ RUN conda install -y \
   bokeh \
   scikit-learn \
   statsmodels \
+  pytables \
+  seaborn \
   && conda clean -tipsy
 
 
