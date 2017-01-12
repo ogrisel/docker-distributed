@@ -65,6 +65,9 @@ RUN conda install -y \
   pandas \
   bokeh \
   scikit-learn \
+  xarray \
+  netCDF4 \
+  bottleneck \
   statsmodels \
   pytables \
   seaborn \
