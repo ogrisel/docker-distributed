@@ -4,4 +4,4 @@
 # preferably with a TLS certificate and define the STATUS_ENDPOINT environment
 # variable to something like "publicname:443" instead.
 STATUS_ENDPOINT="${STATUS_ENDPOINT:-"*"}"
-exec su $BASICUSER -c "env PATH=$PATH dscheduler --host dscheduler --bokeh-whitelist="$STATUS_ENDPOINT" $*"
+exec su $BASICUSER -c "env PATH=$PATH dask-scheduler --host dscheduler --bokeh-whitelist="$STATUS_ENDPOINT" $*"

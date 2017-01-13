@@ -1,5 +1,5 @@
 FROM debian:jessie
-MAINTAINER Olivier Grisel <olivier.grisel@ensta.org>
+MAINTAINER Kyle Foreman <kfor@uw.edu>
 
 RUN apt-get update -yqq  && apt-get install -yqq \
   wget \
@@ -65,13 +65,23 @@ RUN conda install -y \
   pandas \
   bokeh \
   scikit-learn \
+  xarray \
+  netCDF4 \
+  bottleneck \
   statsmodels \
+  pytables \
+  seaborn \
   && conda clean -tipsy
 
 
 # Install the master branch of distributed and dask
 COPY requirements.txt .
 RUN pip install -r requirements.txt && rm -rf ~/.cache/pip/
+
+# Install gcsfuse to mount Google buckets
+RUN echo "deb http://packages.cloud.google.com/apt gcsfuse-jessie main" | tee /etc/apt/sources.list.d/gcsfuse.list
+RUN curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -
+RUN apt-get update -yqq && apt-get install -yqq gcsfuse
 
 # Add local files at the end of the Dockerfule to limit cache busting
 COPY start-notebook.sh ./bin/

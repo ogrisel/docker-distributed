@@ -31,15 +31,15 @@ spec:
     spec:
       containers:
         - name: jupyter-notebook
-          image: ogrisel/distributed:latest
+          image: kforeman/distributed:latest
           args: ["start-notebook.sh"]
           ports:
             - name: http
               containerPort: 8888
           volumeMounts:
-            - mountPath: /work
+            - mountPath: /work/docker-distributed
               name: docker-distributed-repo
       volumes:
         - name: docker-distributed-repo
           gitRepo:
-            repository: "https://github.com/ogrisel/docker-distributed"
+            repository: "https://github.com/kforeman/docker-distributed"
