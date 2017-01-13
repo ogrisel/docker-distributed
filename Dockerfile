@@ -78,6 +78,11 @@ RUN conda install -y \
 COPY requirements.txt .
 RUN pip install -r requirements.txt && rm -rf ~/.cache/pip/
 
+# Install gcsfuse to mount Google buckets
+RUN echo "deb http://packages.cloud.google.com/apt gcsfuse-jessie main" | tee /etc/apt/sources.list.d/gcsfuse.list
+RUN curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -
+RUN apt-get update -yqq && apt-get install -yqq gcsfuse
+
 # Add local files at the end of the Dockerfule to limit cache busting
 COPY start-notebook.sh ./bin/
 COPY start-dworker.sh ./bin/
