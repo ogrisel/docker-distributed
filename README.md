@@ -17,11 +17,11 @@ Source tools.
 The Docker Swarm API is provided as a hosted service by:
 
 - [Azure Container Service](https://azure.microsoft.com/en-us/services/container-service/)
-- [Carina by Rackspace](https://getcarina.com/)
 
 The Kubernetes API is provided as a hosted service by:
 
 - [Google Container Engine](https://cloud.google.com/container-engine/)
+- [Azure Container Service](https://azure.microsoft.com/en-us/services/container-service/)
 - [OpenShift by Red Hat](https://www.openshift.com/)
 
 Alternatively it is possible to [install and manage Kubernetes by
