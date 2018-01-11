@@ -1,3 +1,6 @@
+**WARNING**: this repository is not maintained anymore. Please refer to [dask-kubernetes](https://github.com/dask/dask-kubernetes) instead.
+
+
 # Docker provisioning of Python Distributed compute cluster
 
 This repo hosts some sample configuration to set up docker-containerized
